@@ -1,0 +1,24 @@
+{
+  "aggiornato": "2026-10-22T17:45:00+00:00",
+  "mercati": {
+    "camera": {
+      "titolo": "Camera dei Rappresentanti",
+      "evento": "CONTROLH-2026",
+      "esiti": {
+        "D": {"partito": "Democratici", "quota": 0.9015, "volume": 20264254},
+        "R": {"partito": "Repubblicani", "quota": 0.0995, "volume": 41159856}
+      }
+    },
+    "senato": {
+      "titolo": "Senato",
+      "evento": "CONTROLS-2026",
+      "esiti": {
+        "D": {"partito": "Democratici", "quota": 0.655, "volume": 7377953},
+        "R": {"partito": "Repubblicani", "quota": 0.335, "volume": 9200638}
+      }
+    }
+  },
+  "storico": [
+    {"data": "2026-10-22", "camera": {"D": 0.9015, "R": 0.0995}, "senato": {"D": 0.655, "R": 0.335}}
+  ]
+}

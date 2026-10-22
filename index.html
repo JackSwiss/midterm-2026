@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Midterm USA 2026</title>
+<meta name="description" content="Le quote di Kalshi su chi controllerà Camera e Senato dopo le midterm USA 2026, aggiornate ogni giorno.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --sfondo: #f6f4ef; --carta: #ffffff; --testo: #1c1b19; --tenue: #6b6862;
+    --linea: #e4e0d8; --dem: #2563c9; --rep: #c8373b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --sfondo: #151413; --carta: #1f1e1c; --testo: #f1eee8; --tenue: #a19d95;
+      --linea: #34322e; --dem: #6b9cf0; --rep: #ec6b6e;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--sfondo); color: var(--testo);
+    font: 16px/1.55 Inter, system-ui, sans-serif;
+  }
+  main { max-width: 860px; margin: 0 auto; padding: 48px 16px 64px; }
+  h1 { font-family: Fraunces, Georgia, serif; font-size: clamp(2rem, 6vw, 3rem); line-height: 1.1; margin: 0 0 12px; }
+  .intro { color: var(--tenue); max-width: 60ch; margin: 0 0 8px; }
+  .agg { color: var(--tenue); font-size: .85rem; margin: 0 0 36px; }
+  .scheda {
+    background: var(--carta); border: 1px solid var(--linea); border-radius: 14px;
+    padding: 24px; margin-bottom: 24px;
+  }
+  .scheda h2 { font-family: Fraunces, Georgia, serif; font-size: 1.5rem; margin: 0 0 18px; }
+  .esiti { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 18px; }
+  .esito .nome { font-size: .9rem; color: var(--tenue); }
+  .esito .quota { font-family: Fraunces, Georgia, serif; font-size: 2.6rem; font-weight: 700; line-height: 1; }
+  .esito .vol { font-size: .8rem; color: var(--tenue); margin-top: 4px; }
+  .D .quota { color: var(--dem); }
+  .R .quota { color: var(--rep); }
+  .barra { display: flex; height: 10px; border-radius: 5px; overflow: hidden; background: var(--linea); margin-bottom: 20px; }
+  .barra .D { background: var(--dem); }
+  .barra .R { background: var(--rep); }
+  .grafico { position: relative; height: 200px; }
+  .vuoto { color: var(--tenue); font-size: .9rem; }
+  footer { color: var(--tenue); font-size: .85rem; border-top: 1px solid var(--linea); padding-top: 20px; margin-top: 40px; }
+  footer a { color: inherit; }
+  @media (max-width: 480px) { .esito .quota { font-size: 2rem; } .scheda { padding: 18px; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>Midterm USA 2026</h1>
+  <p class="intro">Chi controllerà il Congresso dopo il voto del 3 novembre? Ogni percentuale è il prezzo di un contratto Kalshi che paga 1 dollaro se l'evento si verifica: è la probabilità che il mercato gli attribuisce.</p>
+  <p class="agg" id="agg">Caricamento dei dati…</p>
+  <div id="schede"></div>
+  <footer>
+    Dati dall'interfaccia pubblica di <a href="https://kalshi.com">Kalshi</a>, aggiornati automaticamente ogni mattina.
+    La quota è il punto medio tra il miglior prezzo di acquisto e di vendita; il volume è il totale in dollari scambiato su quell'esito dall'apertura del mercato.
+    Pagina informativa, non è un consiglio di investimento.
+  </footer>
+</main>
+
+<script>
+const pct = q => Math.round(q * 100) + "%";
+const soldi = v => "$" + new Intl.NumberFormat("it-IT", { notation: "compact", maximumFractionDigits: 1 }).format(v);
+const colore = nome => getComputedStyle(document.documentElement).getPropertyValue(nome).trim();
+
+fetch("data.json?" + Date.now())
+  .then(r => r.json())
+  .then(dati => {
+    const quando = new Date(dati.aggiornato);
+    document.getElementById("agg").textContent =
+      "Ultimo aggiornamento: " + quando.toLocaleString("it-IT", { dateStyle: "long", timeStyle: "short" });
+
+    const contenitore = document.getElementById("schede");
+    for (const [chiave, m] of Object.entries(dati.mercati)) {
+      const D = m.esiti.D, R = m.esiti.R;
+      const scheda = document.createElement("section");
+      scheda.className = "scheda";
+      scheda.innerHTML = `
+        <h2>${m.titolo}</h2>
+        <div class="esiti">
+          <div class="esito D"><div class="nome">${D.partito}</div><div class="quota">${pct(D.quota)}</div><div class="vol">Volume ${soldi(D.volume)}</div></div>
+          <div class="esito R"><div class="nome">${R.partito}</div><div class="quota">${pct(R.quota)}</div><div class="vol">Volume ${soldi(R.volume)}</div></div>
+        </div>
+        <div class="barra"><div class="D" style="width:${D.quota * 100}%"></div><div class="R" style="width:${R.quota * 100}%"></div></div>
+        <div class="grafico"><canvas></canvas></div>`;
+      contenitore.appendChild(scheda);
+
+      const storico = dati.storico.filter(p => p[chiave]);
+      if (storico.length < 2) {
+        scheda.querySelector(".grafico").outerHTML =
+          '<p class="vuoto">Lo storico si costruisce un giorno alla volta: il grafico apparirà da domani.</p>';
+        continue;
+      }
+      new Chart(scheda.querySelector("canvas"), {
+        type: "line",
+        data: {
+          labels: storico.map(p => new Date(p.data).toLocaleDateString("it-IT", { day: "numeric", month: "short" })),
+          datasets: [
+            { label: "Democratici", data: storico.map(p => p[chiave].D * 100), borderColor: colore("--dem"), backgroundColor: colore("--dem") },
+            { label: "Repubblicani", data: storico.map(p => p[chiave].R * 100), borderColor: colore("--rep"), backgroundColor: colore("--rep") }
+          ]
+        },
+        options: {
+          maintainAspectRatio: false,
+          elements: { point: { radius: 0, hitRadius: 8 }, line: { borderWidth: 2, tension: 0.25 } },
+          interaction: { mode: "index", intersect: false },
+          scales: {
+            y: { min: 0, max: 100, ticks: { callback: v => v + "%", color: colore("--tenue") }, grid: { color: colore("--linea") } },
+            x: { ticks: { color: colore("--tenue"), maxTicksLimit: 6 }, grid: { display: false } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: { callbacks: { label: c => `${c.dataset.label}: ${Math.round(c.parsed.y)}%` } }
+          }
+        }
+      });
+    }
+  })
+  .catch(() => {
+    document.getElementById("agg").textContent = "Non riesco a caricare i dati. Riprova tra qualche minuto.";
+  });
+</script>
+</body>
+</html>
