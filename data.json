@@ -1,5 +1,5 @@
 {
-  "aggiornato": "2026-10-24T06:47:35+00:00",
+  "aggiornato": "2026-10-25T06:48:11+00:00",
   "mercati": {
     "camera": {
       "titolo": "Camera dei Rappresentanti",
@@ -7,13 +7,13 @@
       "esiti": {
         "D": {
           "partito": "Democratici",
-          "quota": 0.9115,
-          "volume": 21648007
+          "quota": 0.9055,
+          "volume": 22060154
         },
         "R": {
           "partito": "Repubblicani",
-          "quota": 0.0895,
-          "volume": 46411509
+          "quota": 0.0935,
+          "volume": 47658269
         }
       }
     },
@@ -23,13 +23,13 @@
       "esiti": {
         "D": {
           "partito": "Democratici",
-          "quota": 0.665,
-          "volume": 7868281
+          "quota": 0.625,
+          "volume": 8096094
         },
         "R": {
           "partito": "Repubblicani",
-          "quota": 0.345,
-          "volume": 10131560
+          "quota": 0.365,
+          "volume": 10585566
         }
       }
     }
@@ -66,6 +66,17 @@
       "senato": {
         "D": 0.665,
         "R": 0.345
+      }
+    },
+    {
+      "data": "2026-10-25",
+      "camera": {
+        "D": 0.9055,
+        "R": 0.0935
+      },
+      "senato": {
+        "D": 0.625,
+        "R": 0.365
       }
     }
   ]
