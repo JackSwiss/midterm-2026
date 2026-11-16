@@ -1,5 +1,5 @@
 {
-  "aggiornato": "2026-11-15T07:11:18+00:00",
+  "aggiornato": "2026-11-16T08:53:14+00:00",
   "mercati": {
     "camera": {
       "titolo": "Camera dei Rappresentanti",
@@ -301,6 +301,17 @@
     },
     {
       "data": "2026-11-15",
+      "camera": {
+        "D": 0.999,
+        "R": 0.001
+      },
+      "senato": {
+        "D": 0.999,
+        "R": 0.001
+      }
+    },
+    {
+      "data": "2026-11-16",
       "camera": {
         "D": 0.999,
         "R": 0.001
